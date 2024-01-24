@@ -3,7 +3,7 @@ npm run build OR tsc build
 
 Module is not published to npm yet, however, you can use it by installing it from local path after build
 
-npm install <path to this directory>
+npm install ```path-to-this-directory```
 
 # Usage example
 
@@ -28,4 +28,4 @@ npm install <path to this directory>
         }
     );
 
-When switching streams remember to destroy the player and recreate by using destroy() method on player object.
+When switching streams remember to destroy the player by using destroy() method on player object and recreate the player.
