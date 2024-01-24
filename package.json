@@ -1,0 +1,29 @@
+{
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "tsc --build --clean"
+  },
+  "dependencies": {
+    "dashjs": "^4.7.3",
+    "hasplayer.js": "^1.15.1",
+    "hls.js": "^1.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5"
+  },
+  "name": "nas-player",
+  "version": "1.0.0",
+  "description": "Player adapter for hls.js, dash.js and hasplayer.js",
+  "main": "index.js",
+  "keywords": [
+    "nas",
+    "player",
+    "dash.js",
+    "hls.js",
+    "hasplayer",
+    "dashjs",
+    "hlsjs"
+  ],
+  "author": "David Cavar",
+  "license": "MIT"
+}
