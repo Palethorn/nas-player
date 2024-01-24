@@ -1,8 +1,8 @@
 import { MediaPlayer } from "hasplayer.js";
-import { Tech } from "./tech";
-import { Quality } from "./models/quality";
+import { TechInterface } from "./tech-interface";
+import { Quality } from "../models/quality";
 
-export class SmoothTech implements Tech {
+export class SmoothTech implements TechInterface {
     player: MediaPlayer;
 
     init(

@@ -1,4 +1,4 @@
-import { Tech } from "./tech";
+import { TechInterface } from "./tech/tech-interface";
 import { Quality } from "./models/quality";
 
 /**
@@ -6,7 +6,7 @@ import { Quality } from "./models/quality";
  */
 export class Player {
     url: string = '';
-    tech: Tech|null = null;
+    tech: TechInterface|null = null;
     debug: boolean = false;
     muted: boolean = false;
     volume: number = .5;
@@ -28,7 +28,7 @@ export class Player {
     ];
 
     init(
-        tech: Tech,
+        tech: TechInterface,
         videoElement: HTMLMediaElement,
         url: string,
         autoplay: boolean,

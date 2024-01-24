@@ -1,9 +1,9 @@
-import { AudioTrack } from './models/audio-track';
-import { Quality } from './models/quality';
-import { Tech } from './tech';
+import { AudioTrack } from '../models/audio-track';
+import { Quality } from '../models/quality';
+import { TechInterface } from './tech-interface';
 import { MediaPlayer } from 'dashjs'
 
-export class DashTech implements Tech {
+export class DashTech implements TechInterface {
     url: string = '';
     player: any = null;
     is_live: boolean = false;

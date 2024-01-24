@@ -14,7 +14,9 @@
   "name": "nas-player",
   "version": "1.0.0",
   "description": "Player adapter for hls.js, dash.js and hasplayer.js",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [ "dist/*" ],
   "keywords": [
     "nas",
     "player",

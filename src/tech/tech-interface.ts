@@ -1,7 +1,7 @@
-import { AudioTrack } from "./models/audio-track";
-import { Quality } from "./models/quality";
+import { AudioTrack } from "../models/audio-track";
+import { Quality } from "../models/quality";
 
-export interface Tech {
+export interface TechInterface {
 
     init(
         videoElement: HTMLMediaElement,

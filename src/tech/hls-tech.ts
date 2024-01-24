@@ -1,8 +1,8 @@
-import { Tech } from './tech';
+import { TechInterface } from './tech-interface';
 import Hls from 'hls.js';
-import { Quality } from './models/quality';
+import { Quality } from '../models/quality';
 
-export class HlsTech implements Tech {
+export class HlsTech implements TechInterface {
     url: string = '';
     player: any = null;
     headers: any = null;
