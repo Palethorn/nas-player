@@ -165,6 +165,14 @@ export class HlsTech implements TechInterface {
     getCurrentQuality(): Quality {
         console.log(this.player.currentLevel);
 
+        var qualities = this.getQualities();
+
+        for(var i in qualities) {
+            if(this.player.currentLevel == qualities[i].index) {
+                return qualities[i];
+            }
+        }
+
         return {
             index: 0,
             bitrate: 0,
