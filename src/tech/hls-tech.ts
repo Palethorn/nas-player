@@ -13,6 +13,55 @@ export class HlsTech implements TechInterface {
     onLicenseError: any = null;
     recover_take: number = 0;
 
+    manifestParsedHandler: any = (event: any, data: any) => {
+        data.type = event;
+        this.eventHandler(data);
+
+        if(this.autoplay === true) {
+            this.videoElement.play();
+        }
+    }
+
+    levelLoadedHandler: any = (event: any, data: any) => {
+        if(data.details != undefined && data.details.type !== 'VOD') {
+            this.is_live = true;
+        }
+
+        data.type = event;
+        this.eventHandler(data);
+    }
+
+    errorHandler: any = (event: any, data: any) => {
+        data.type = event;
+        console.info(event, data);
+
+        if(data.fatal) {
+            switch(data.type) {
+                case Hls.ErrorTypes.MEDIA_ERROR: 
+                    console.error("Media error");
+                    this.eventHandler(data);
+
+                    if(this.recover_take == 1) {
+                        this.player.swapAudioCodec();
+                    }
+
+                    this.player.recoverMediaError();
+                    this.recover_take++;
+                    break;
+                case Hls.ErrorTypes.NETWORK_ERROR:
+                    console.error("Network error");
+                    this.eventHandler(data);
+                    this.player.startLoad();
+                    break;
+                default:
+                    console.error("Unrecoverable error");
+                    this.eventHandler(data);
+                    this.destroy();
+                    break;
+            }
+        }
+    }
+
     init(
         videoElement: HTMLMediaElement,
         url: string,
@@ -41,59 +90,22 @@ export class HlsTech implements TechInterface {
             }
         });
 
+        this.attachHandlers();
         this.eventHandler = eventHandler;
-
-        this.player.on(Hls.Events.MANIFEST_PARSED, (event: any, data: any) => {
-            data.type = event;
-            this.eventHandler(data);
-    
-            if(this.autoplay === true) {
-                this.videoElement.play();
-            }
-        });
-
-        this.player.on(Hls.Events.LEVEL_LOADED, (event: any, data: any) => {
-            if(data.details != undefined && data.details.type !== 'VOD') {
-                this.is_live = true;
-            }
-    
-            data.type = event;
-            this.eventHandler(data);
-        });
-    
-        this.player.on(Hls.Events.ERROR, (event: any, data: any) => {
-            data.type = event;
-            console.info(event, data);
-    
-            if(data.fatal) {
-                switch(data.type) {
-                    case Hls.ErrorTypes.MEDIA_ERROR: 
-                        console.error("Media error");
-                        this.eventHandler(data);
-    
-                        if(this.recover_take == 1) {
-                            this.player.swapAudioCodec();
-                        }
-    
-                        this.player.recoverMediaError();
-                        this.recover_take++;
-                        break;
-                    case Hls.ErrorTypes.NETWORK_ERROR:
-                        console.error("Network error");
-                        this.eventHandler(data);
-                        this.player.startLoad();
-                        break;
-                    default:
-                        console.error("Unrecoverable error");
-                        this.eventHandler(data);
-                        this.destroy();
-                        break;
-                }
-            }
-        });
-
         this.player.loadSource(this.url);
         this.player.attachMedia(this.videoElement);
+    }
+
+    private attachHandlers() {
+        this.player.on(Hls.Events.MANIFEST_PARSED, this.manifestParsedHandler);
+        this.player.on(Hls.Events.LEVEL_LOADED, this.levelLoadedHandler);
+        this.player.on(Hls.Events.ERROR, this.errorHandler);
+    }
+
+    private detachHandlers() {
+        this.player.off(Hls.Events.MANIFEST_PARSED, this.manifestParsedHandler);
+        this.player.off(Hls.Events.LEVEL_LOADED, this.levelLoadedHandler);
+        this.player.off(Hls.Events.ERROR, this.errorHandler);
     }
 
     getPlayer() {
@@ -179,6 +191,8 @@ export class HlsTech implements TechInterface {
 
     destroy() {
         if(this.player != null) {
+            console.log("Hlsjs destroy");
+            this.detachHandlers();
             this.player.destroy();
             this.player = null;
         }

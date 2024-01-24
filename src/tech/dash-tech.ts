@@ -13,6 +13,39 @@ export class DashTech implements TechInterface {
     onLicenseError: any = null;
     headers: any = null;
 
+    defaultHandler: any = (e: any) => {
+        this.eventHandler(e);
+    }
+
+    ascertainStreamType: any = (e: any) => {
+        if(e.data.type == 'dynamic') {
+            this.is_live = true;
+        }
+
+        this.eventHandler(e);
+    }
+
+    playerErrorHandler: any = (e: any) => {
+        console.error(e.error.message);
+
+        if(this.eventHandler) {
+            this.eventHandler(e);
+        } else {
+            console.warn('eventHandler is undefined');
+        }
+
+        if(e.error.code == 111) {
+            this.onLicenseError();
+        }
+
+        if(e.error == 'key_session') {
+            this.onLicenseError();
+            return;
+        }
+
+        this.destroy();
+    }
+
     init(
         videoElement: HTMLMediaElement,
         url: string,
@@ -31,6 +64,7 @@ export class DashTech implements TechInterface {
 
         this.player = MediaPlayer().create();
         this.eventHandler = eventHandler;
+        this.attachHandlers();
 
         if(typeof this.player.setFastSwitchEnabled != 'undefined') {
             this.player.setFastSwitchEnabled(true);
@@ -44,43 +78,6 @@ export class DashTech implements TechInterface {
             this.player.getProtectionController().setRobustnessLevel('SW_SECURE_CRYPTO')
             this.player.setProtectionData(protData);
         }
-
-        this.player.on(MediaPlayer.events.METRIC_CHANGED, (e: any) => {
-            eventHandler(e);
-        });
-    
-        this.player.on(MediaPlayer.events.STREAM_INITIALIZED, (e: any) => {
-            eventHandler(e);
-        });
-    
-        this.player.on(MediaPlayer.events.MANIFEST_LOADED, (e: any) => {
-            if(e.data.type == 'dynamic') {
-                this.is_live = true;
-            }
-    
-            eventHandler(e);
-        });
-    
-        this.player.on(MediaPlayer.events.ERROR, (e: any) => {
-            console.error(e.error.message);
-    
-            if('undefined' !== typeof(eventHandler)) {
-                eventHandler(e);
-            } else {
-                console.warn('eventHandler is undefined');
-            }
-    
-            if(e.error.code == 111) {
-                this.onLicenseError();
-            }
-    
-            if(e.error == 'key_session') {
-                this.onLicenseError();
-                return;
-            }
-    
-            this.destroy();
-        });
     
         var requestHeadersMod = (xhr: any) => {
             for(var header_name in this.headers) {
@@ -104,9 +101,24 @@ export class DashTech implements TechInterface {
                 true
             );
         }
-    
+
         this.player.label = "dash";
+        console.log('initializing');
         this.player.initialize(this.videoElement, this.url, this.autoplay);
+    }
+
+    private attachHandlers() {
+        this.player.on(MediaPlayer.events.METRIC_CHANGED, this.defaultHandler);
+        this.player.on(MediaPlayer.events.STREAM_INITIALIZED, this.defaultHandler);
+        this.player.on(MediaPlayer.events.MANIFEST_LOADED, this.ascertainStreamType);
+        this.player.on(MediaPlayer.events.ERROR, this.playerErrorHandler);
+    }
+
+    private detachHandlers() {
+        this.player.off(MediaPlayer.events.METRIC_CHANGED, this.defaultHandler);
+        this.player.off(MediaPlayer.events.STREAM_INITIALIZED, this.defaultHandler);
+        this.player.off(MediaPlayer.events.MANIFEST_LOADED, this.ascertainStreamType);
+        this.player.off(MediaPlayer.events.ERROR, this.playerErrorHandler);
     }
 
     getPlayer() {
@@ -246,6 +258,8 @@ export class DashTech implements TechInterface {
 
     destroy() {
         if(this.player != null) {
+            this.detachHandlers();
+            console.log("Dashjs destroy");
             this.player.reset();
             this.player = null;
         }

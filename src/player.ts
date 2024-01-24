@@ -111,7 +111,14 @@ export class Player {
     }
 
     getCurrentQuality(): Quality {
-        return null != this.tech ? this.tech.getCurrentQuality() : { index: 0, width: 0, height: 0, bitrate: 0, bitrateStr: '0k' };
+        return null != this.tech ? this.tech.getCurrentQuality() : { 
+            index: 0, 
+            width: 0, 
+            height: 0, 
+            bitrate: 0, 
+            bitrateStr: 
+            '0k' 
+        };
     }
 
     getAudioTracks() {
@@ -221,6 +228,7 @@ export class Player {
     }
 
     destroy() {
+        console.log("Player destroy");
         this.clearVideoElement();
         this.clearEventHandlers();
 
