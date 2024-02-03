@@ -7,7 +7,7 @@ export class HlsTech implements TechInterface {
     url: string = '';
     player: any = null;
     headers: any = null;
-    logger: Logger = null;
+    logger: Logger = new Logger('HlsTech');
     recover_take: number = 0;
     is_live: boolean = false;
     eventHandler: any = null;
@@ -35,14 +35,14 @@ export class HlsTech implements TechInterface {
 
     errorHandler: any = (event: any, data: any) => {
         data.type = event;
-        this.logger.d({ event, data });
+        this.logger.i({ event, data });
+        this.eventHandler(data);
 
         if(data.fatal) {
             switch(data.type) {
                 case Hls.ErrorTypes.MEDIA_ERROR: 
                     this.logger.e("Media error");
-                    this.eventHandler(data);
-
+                    
                     if(this.recover_take == 1) {
                         this.player.swapAudioCodec();
                     }
@@ -52,12 +52,10 @@ export class HlsTech implements TechInterface {
                     break;
                 case Hls.ErrorTypes.NETWORK_ERROR:
                     this.logger.e("Network error");
-                    this.eventHandler(data);
                     this.player.startLoad();
                     break;
                 default:
                     this.logger.e("Unrecoverable error");
-                    this.eventHandler(data);
                     this.destroy();
                     break;
             }
@@ -74,11 +72,10 @@ export class HlsTech implements TechInterface {
         protData: any,
         onLicenseError: any
     ) {
-        this.logger = new Logger('DashTech', debug);
-        
         this.url = url;
         this.headers = headers;
         this.autoplay = autoplay;
+        this.logger.debug = debug;
         this.videoElement = videoElement;
         this.onLicenseError = onLicenseError;
         this.videoElement = videoElement;

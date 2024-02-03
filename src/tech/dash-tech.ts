@@ -8,7 +8,7 @@ export class DashTech implements TechInterface {
     url: string = '';
     player: any = null;
     headers: any = null;
-    logger: Logger = null;
+    logger: Logger = new Logger('DashTech');;
     eventHandler: any = null;
     is_live: boolean = false;
     autoplay: boolean = false;
@@ -45,6 +45,7 @@ export class DashTech implements TechInterface {
             return;
         }
 
+        this.defaultHandler(e);
         this.destroy();
     }
 
@@ -58,7 +59,7 @@ export class DashTech implements TechInterface {
         protData: any,
         onLicenseError: any
     ) {
-        this.logger = new Logger('DashTech', debug);
+        this.logger.debug = debug;
         this.url = url;
         this.headers = headers;
         this.autoplay = autoplay;
