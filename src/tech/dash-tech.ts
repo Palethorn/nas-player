@@ -1,4 +1,4 @@
-import { Logger } from '../logger';
+import { Logger } from 'nas-logger';
 import { AudioTrack } from '../models/audio-track';
 import { Quality } from '../models/quality';
 import { TechInterface } from './tech-interface';

@@ -1,7 +1,7 @@
 import { TechInterface } from './tech-interface';
 import Hls from 'hls.js';
 import { Quality } from '../models/quality';
-import { Logger } from '../logger';
+import { Logger } from 'nas-logger';
 
 export class HlsTech implements TechInterface {
     url: string = '';

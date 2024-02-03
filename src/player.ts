@@ -1,6 +1,6 @@
 import { TechInterface } from "./tech/tech-interface";
 import { Quality } from "./models/quality";
-import { Logger } from "./logger";
+import { Logger } from "nas-logger";
 
 /**
  * Abstraction
