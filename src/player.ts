@@ -1,31 +1,60 @@
 import { TechInterface } from "./tech/tech-interface";
 import { Quality } from "./models/quality";
+import { Logger } from "./logger";
 
 /**
  * Abstraction
  */
 export class Player {
     url: string = '';
-    tech: TechInterface|null = null;
-    debug: boolean = false;
-    muted: boolean = false;
-    volume: number = .5;
     player: any = null;
+    volume: number = .5;
     headers: any = null;
     protData: any = null;
+    logger: Logger = null;
+    debug: boolean = false;
+    muted: boolean = false;
+    eventHandlers: any = {};
     is_live: boolean = false;
-    videoElement: HTMLMediaElement = document.createElement('video');
     autoplay: boolean = false;
     onLicenseError: any = null;
-    eventHandlers: any = {};
-    event_handler_count: number = 0;
     subtitlesUrl: string|null = '';
+    tech: TechInterface|null = null;
+    event_handler_count: number = 0;
+    videoElement: HTMLMediaElement = document.createElement('video');
 
     available_events = [
-        "manifestLoaded", "streamInitialized", "abort", "canplay", "canplaythrough", "durationchange", "emptied", "encrypted", "ended", "error", "interruptbegin", "loadeddata", 
-        "loadedmetadata", "loadstart", "pause", "play", "playing", "progress", "ratechange", "seeked", "seeking", "stalled", "suspend", 
-        "timeupdate", "volumechange", "waiting"
+        "manifestLoaded",
+        "streamInitialized",
+        "abort",
+        "canplay",
+        "canplaythrough",
+        "durationchange",
+        "emptied",
+        "encrypted",
+        "ended",
+        "error",
+        "interruptbegin",
+        "loadeddata", 
+        "loadedmetadata",
+        "loadstart",
+        "pause",
+        "play",
+        "playing",
+        "progress",
+        "ratechange",
+        "seeked",
+        "seeking",
+        "stalled",
+        "suspend", 
+        "timeupdate",
+        "volumechange",
+        "waiting"
     ];
+
+    constructor() {
+        this.logger = new Logger('Player');
+    }
 
     init(
         tech: TechInterface,
@@ -37,6 +66,8 @@ export class Player {
         protData: any,
         onLicenseError: any
     ) {
+        this.logger.debug = debug;
+
         this.url = url;
         this.tech = tech;
         this.videoElement = videoElement;
@@ -184,11 +215,11 @@ export class Player {
     }
 
     handleEvent = (event: any) => {
-        if(event.type !== 'metricChanged' && event.type != 'timeupdate') {
-            console.log(event.type);
-        }
-        
         if((event.type in this.eventHandlers)) {
+            if('metricChanged' != event.type && 'timeupdate' != event.type) {
+                this.logger.d(event.type);
+            }
+
             for(var event_handler_id in this.eventHandlers[event.type]) {
                 this.eventHandlers[event.type][event_handler_id](event);
             }
@@ -196,9 +227,10 @@ export class Player {
     }
 
     addEventHandler(event: any, handler: any) {
-        if(!(event.type in this.eventHandlers)) {
+        if(!(event in this.eventHandlers)) {
             this.eventHandlers[event] = {};
         }
+
 
         var id = 'handler_' + this.event_handler_count++;
         this.eventHandlers[event][id] = handler;
@@ -228,7 +260,7 @@ export class Player {
     }
 
     destroy() {
-        console.log("Player destroy");
+        this.logger.d("Player destroy");
         this.clearVideoElement();
         this.clearEventHandlers();
 

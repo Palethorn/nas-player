@@ -1,3 +1,4 @@
+import { Logger } from '../logger';
 import { AudioTrack } from '../models/audio-track';
 import { Quality } from '../models/quality';
 import { TechInterface } from './tech-interface';
@@ -6,12 +7,13 @@ import { MediaPlayer } from 'dashjs'
 export class DashTech implements TechInterface {
     url: string = '';
     player: any = null;
+    headers: any = null;
+    logger: Logger = null;
+    eventHandler: any = null;
     is_live: boolean = false;
     autoplay: boolean = false;
-    eventHandler: any = null;
-    videoElement: HTMLMediaElement|null = null;
     onLicenseError: any = null;
-    headers: any = null;
+    videoElement: HTMLMediaElement|null = null;
 
     defaultHandler: any = (e: any) => {
         this.eventHandler(e);
@@ -26,12 +28,12 @@ export class DashTech implements TechInterface {
     }
 
     playerErrorHandler: any = (e: any) => {
-        console.error(e.error.message);
+        this.logger.e(e.error.message);
 
         if(this.eventHandler) {
             this.eventHandler(e);
         } else {
-            console.warn('eventHandler is undefined');
+            this.logger.w('eventHandler is undefined');
         }
 
         if(e.error.code == 111) {
@@ -56,6 +58,7 @@ export class DashTech implements TechInterface {
         protData: any,
         onLicenseError: any
     ) {
+        this.logger = new Logger('DashTech', debug);
         this.url = url;
         this.headers = headers;
         this.autoplay = autoplay;
@@ -103,7 +106,7 @@ export class DashTech implements TechInterface {
         }
 
         this.player.label = "dash";
-        console.log('initializing');
+        this.logger.d('initializing');
         this.player.initialize(this.videoElement, this.url, this.autoplay);
     }
 
@@ -259,7 +262,7 @@ export class DashTech implements TechInterface {
     destroy() {
         if(this.player != null) {
             this.detachHandlers();
-            console.log("Dashjs destroy");
+            this.logger.d("Dashjs destroy");
             this.player.reset();
             this.player = null;
         }

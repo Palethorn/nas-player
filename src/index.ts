@@ -4,3 +4,4 @@ export { TechInterface } from './tech/tech-interface';
 export { DashTech } from './tech/dash-tech'
 export { HlsTech } from './tech/hls-tech'
 export { Player } from './player';
+export { Logger } from './logger';

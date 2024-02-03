@@ -1,17 +1,19 @@
 import { TechInterface } from './tech-interface';
 import Hls from 'hls.js';
 import { Quality } from '../models/quality';
+import { Logger } from '../logger';
 
 export class HlsTech implements TechInterface {
     url: string = '';
     player: any = null;
     headers: any = null;
+    logger: Logger = null;
+    recover_take: number = 0;
     is_live: boolean = false;
     eventHandler: any = null;
-    videoElement: HTMLMediaElement = document.createElement('video');
     autoplay: boolean = false;
     onLicenseError: any = null;
-    recover_take: number = 0;
+    videoElement: HTMLMediaElement = document.createElement('video');
 
     manifestParsedHandler: any = (event: any, data: any) => {
         data.type = event;
@@ -33,12 +35,12 @@ export class HlsTech implements TechInterface {
 
     errorHandler: any = (event: any, data: any) => {
         data.type = event;
-        console.info(event, data);
+        this.logger.d({ event, data });
 
         if(data.fatal) {
             switch(data.type) {
                 case Hls.ErrorTypes.MEDIA_ERROR: 
-                    console.error("Media error");
+                    this.logger.e("Media error");
                     this.eventHandler(data);
 
                     if(this.recover_take == 1) {
@@ -49,12 +51,12 @@ export class HlsTech implements TechInterface {
                     this.recover_take++;
                     break;
                 case Hls.ErrorTypes.NETWORK_ERROR:
-                    console.error("Network error");
+                    this.logger.e("Network error");
                     this.eventHandler(data);
                     this.player.startLoad();
                     break;
                 default:
-                    console.error("Unrecoverable error");
+                    this.logger.e("Unrecoverable error");
                     this.eventHandler(data);
                     this.destroy();
                     break;
@@ -72,6 +74,8 @@ export class HlsTech implements TechInterface {
         protData: any,
         onLicenseError: any
     ) {
+        this.logger = new Logger('DashTech', debug);
+        
         this.url = url;
         this.headers = headers;
         this.autoplay = autoplay;
@@ -163,7 +167,6 @@ export class HlsTech implements TechInterface {
     }
 
     getCurrentQuality(): Quality {
-        console.log(this.player.currentLevel);
 
         var qualities = this.getQualities();
 
@@ -199,7 +202,7 @@ export class HlsTech implements TechInterface {
 
     destroy() {
         if(this.player != null) {
-            console.log("Hlsjs destroy");
+            this.logger.d("Hlsjs destroy");
             this.detachHandlers();
             this.player.destroy();
             this.player = null;
