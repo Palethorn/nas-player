@@ -30,19 +30,15 @@ export class DashTech implements TechInterface {
     playerErrorHandler: any = (e: any) => {
         this.logger.e(e.error.message);
 
+        if(e.error.code == 111 || e.error == 'key_session' && this.onLicenseError()) {
+            this.onLicenseError();
+            return;
+        }
+
         if(this.eventHandler) {
             this.eventHandler(e);
         } else {
             this.logger.w('eventHandler is undefined');
-        }
-
-        if(e.error.code == 111) {
-            this.onLicenseError();
-        }
-
-        if(e.error == 'key_session') {
-            this.onLicenseError();
-            return;
         }
 
         this.defaultHandler(e);
