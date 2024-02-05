@@ -140,6 +140,9 @@ export class HlsTech implements TechInterface {
         var u = this.player.levels;
         var bitrates = [];
 
+        var b = { index: -1, bitrate: 0, bitrateStr: 'Auto', width: 0, height: 0 };
+        bitrates.push(b);
+
         for(var i = 0; i < u.length; i++) {
             var b = {
                 index: 0,

@@ -164,15 +164,32 @@ export class DashTech implements TechInterface {
         }
     }
 
+    calcBitrateStr(bitrate: number) {
+        var b = bitrate + 'bps';
+
+        if(bitrate > 1000) {
+            b = Math.floor(bitrate / 1000) + 'kbps';
+        }
+
+        if(bitrate > 1000000) {
+            b = Math.floor(bitrate / 1000000) + 'mbps';
+        }
+
+        return 
+    }
+
     getQualities(): Quality[] {
         var u = this.player.getBitrateInfoListFor("video");
         var bitrates = [];
+
+        var b = { index: -1, bitrate: 0, bitrateStr: 'Auto', width: 0, height: 0 };
+        bitrates.push(b);
 
         for(var i = 0; i < u.length; i++) {
             var b = { index: 0, bitrate: 0, bitrateStr: '0k', width: 0, height: 0 };
             b.index = u[i].qualityIndex;
             b.bitrate = u[i].bitrate;
-            b.bitrateStr = Math.floor(u[i].bitrate / 1024) + 'k';
+            b.bitrateStr = this.calcBitrateStr
             b.width = u[i].width;
             b.height = u[i].height;
             bitrates.push(b);
