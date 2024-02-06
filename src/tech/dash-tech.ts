@@ -3,6 +3,7 @@ import { AudioTrack } from '../models/audio-track';
 import { Quality } from '../models/quality';
 import { TechInterface } from './tech-interface';
 import { MediaPlayer } from 'dashjs'
+import { Utils } from '../utils';
 
 export class DashTech implements TechInterface {
     url: string = '';
@@ -87,15 +88,10 @@ export class DashTech implements TechInterface {
             return xhr;
         }
 
-        var requestUrlMod = (xhr: any) => {
-            return this.url;
-        }
-
         if(null != this.headers) {
             this.player.extend("RequestModifier", () => {
                     return {
-                        modifyRequestHeader: requestHeadersMod,
-                        modifyRequestURL: requestUrlMod
+                        modifyRequestHeader: requestHeadersMod
                     };
                 },
                 true
@@ -164,20 +160,6 @@ export class DashTech implements TechInterface {
         }
     }
 
-    calcBitrateStr(bitrate: number) {
-        var b = bitrate + 'bps';
-
-        if(bitrate > 1000) {
-            b = Math.floor(bitrate / 1000) + 'kbps';
-        }
-
-        if(bitrate > 1000000) {
-            b = Math.floor(bitrate / 1000000) + 'mbps';
-        }
-
-        return 
-    }
-
     getQualities(): Quality[] {
         var u = this.player.getBitrateInfoListFor("video");
         var bitrates = [];
@@ -189,7 +171,7 @@ export class DashTech implements TechInterface {
             var b = { index: 0, bitrate: 0, bitrateStr: '0k', width: 0, height: 0 };
             b.index = u[i].qualityIndex;
             b.bitrate = u[i].bitrate;
-            b.bitrateStr = this.calcBitrateStr
+            b.bitrateStr = Utils.calcBitrateStr(u[i].bitrate);
             b.width = u[i].width;
             b.height = u[i].height;
             bitrates.push(b);

@@ -2,6 +2,7 @@ import { TechInterface } from './tech-interface';
 import Hls from 'hls.js';
 import { Quality } from '../models/quality';
 import { Logger } from 'nas-logger';
+import { Utils } from '../utils';
 
 export class HlsTech implements TechInterface {
     url: string = '';
@@ -154,7 +155,7 @@ export class HlsTech implements TechInterface {
             
             b.index = u[i].level != undefined ? u[i].level : i;
             b.bitrate = u[i].bitrate;
-            b.bitrateStr = Math.floor(b.bitrate / 1024) + 'k';
+            b.bitrateStr = Utils.calcBitrateStr(u[i].bitrate);
             b.height = u[i].height;
             bitrates.push(b);
         }
