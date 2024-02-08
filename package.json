@@ -13,7 +13,7 @@
     "@types/node": "^20.11.5"
   },
   "name": "nas-player",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Player adapter for hls.js, dash.js and hasplayer.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
