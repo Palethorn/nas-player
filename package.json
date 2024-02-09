@@ -1,4 +1,7 @@
 {
+  "name": "nas-player",
+  "version": "1.0.4",
+  "description": "Player adapter for hls.js, dash.js and hasplayer.js",
   "scripts": {
     "build": "tsc --build",
     "clean": "tsc --build --clean",
@@ -13,9 +16,6 @@
   "devDependencies": {
     "@types/node": "^20.11.5"
   },
-  "name": "nas-player",
-  "version": "1.0.3",
-  "description": "Player adapter for hls.js, dash.js and hasplayer.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

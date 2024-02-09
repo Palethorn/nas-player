@@ -165,7 +165,7 @@ export class Player {
     }
 
     setVolume(volume: number) {
-        if(this.muted) {
+        if(!this.muted) {
             if(1 == volume) {
                 this.videoElement.volume = .99;
             } else {
