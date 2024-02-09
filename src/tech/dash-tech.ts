@@ -65,14 +65,6 @@ export class DashTech implements TechInterface {
 
         this.player = MediaPlayer().create();
 
-        this.player.updateSettings({
-            streaming: {
-                utcSynchronization: {
-                    enable: false
-                }
-            }
-        });
-
         this.eventHandler = eventHandler;
         this.attachHandlers();
 

@@ -8,7 +8,7 @@ import { Logger } from "nas-logger";
 export class Player {
     url: string = '';
     player: any = null;
-    volume: number = .5;
+    volume: number = .99;
     headers: any = null;
     protData: any = null;
     logger: Logger = null;
@@ -75,7 +75,7 @@ export class Player {
         this.url = url;
         this.debug = debug;
         this.muted = false;
-        this.volume = .5;
+        this.volume = .99;
         this.headers = headers;
         this.autoplay = autoplay;
         this.protData = protData;
@@ -165,13 +165,12 @@ export class Player {
     }
 
     setVolume(volume: number) {
-        this.muted = false;
-
-        // Crazy bug if the volume is set to 1 on first load then player volumechange event is not fired
-        if(1 == volume) {
-            this.videoElement.volume = .99;
-        } else {
-            this.videoElement.volume = volume;
+        if(this.muted) {
+            if(1 == volume) {
+                this.videoElement.volume = .99;
+            } else {
+                this.videoElement.volume = volume;
+            }
         }
 
         this.volume = volume;

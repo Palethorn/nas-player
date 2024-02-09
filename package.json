@@ -1,7 +1,8 @@
 {
   "scripts": {
     "build": "tsc --build",
-    "clean": "tsc --build --clean"
+    "clean": "tsc --build --clean",
+    "watch": "tsc --watch"
   },
   "dependencies": {
     "dashjs": "^4.7.3",
